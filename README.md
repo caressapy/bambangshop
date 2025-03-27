@@ -119,3 +119,25 @@ Saya belum terlalu mendalami fitur-fitur Postman secara menyeluruh, tetapi sejau
 Selain itu, fitur *Headers* dan *Authorization* dalam Postman sangat berguna, terutama untuk proyek yang memerlukan autentikasi atau penggunaan *custom headers*. Dengan Postman, saya bisa menguji API dengan cepat dan efisien tanpa harus menulis skrip tambahan atau mengandalkan browser. Secara keseluruhan, Postman adalah alat yang sangat praktis untuk pengujian API dalam proyek pengembangan perangkat lunak.  
 
 #### Reflection Publisher-3
+
+#### **Observer Pattern Variations: Push vs Pull**  
+Dalam tutorial ini, kita menerapkan **Push model**, di mana setiap kali terjadi perubahan pada **Product (publisher)**, sistem secara otomatis mengirimkan notifikasi kepada **Subscriber** melalui **NotificationService**. Hal ini dapat dilihat dalam implementasi di `src/service/product.rs`, di mana setiap kali produk baru dibuat, diperbarui, atau dihapus, **Subscriber** akan langsung menerima informasi terkait.  
+
+#### **Keuntungan dan Kerugian Menggunakan Pull Model**  
+Jika kita menggunakan **Pull model**, Subscriber tidak akan mendapatkan notifikasi secara langsung. Sebaliknya, mereka harus secara aktif mengambil informasi terbaru dari **Product** saat mereka membutuhkannya.  
+
+**Keuntungan Pull Model:**  
+- Mengurangi beban server karena tidak perlu terus-menerus mengirim notifikasi ke semua Subscriber setiap ada perubahan.  
+- Subscriber hanya mengambil data saat diperlukan, sehingga dapat menghindari notifikasi yang tidak relevan.  
+
+**Kekurangan Pull Model:**  
+- Subscriber harus terus-menerus mengecek apakah ada perubahan baru pada **Product**, yang bisa mengakibatkan polling berlebihan dan meningkatkan beban server.  
+- Tidak ada cara bagi Subscriber untuk mengetahui kapan perubahan terjadi, kecuali mereka melakukan permintaan berulang ke publisher.  
+
+#### **Dampak Tidak Menggunakan Multi-threading dalam Proses Notifikasi**  
+Jika kita tidak menggunakan **multi-threading**, setiap proses pengiriman notifikasi ke Subscriber akan dilakukan secara **synchronous**, yang berarti setiap notifikasi harus dikirim satu per satu sebelum server dapat menangani permintaan lain.  
+
+**Akibatnya:**  
+- Jika jumlah Subscriber banyak, proses notifikasi bisa menjadi sangat lambat dan menyebabkan bottleneck.  
+- Web app tidak bisa menangani request lain selama notifikasi sedang dikirim, menyebabkan pengalaman pengguna yang buruk.  
+- Dengan multi-threading, setiap notifikasi bisa dikirim secara paralel, memungkinkan sistem tetap responsif dan efisien.  
