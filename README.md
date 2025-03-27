@@ -78,6 +78,22 @@ This is the place for you to write reflections:
 
 #### Reflection Publisher-1
 
+Dalam buku *Head First Design Patterns*, Subscriber didefinisikan sebagai sebuah interface dalam diagram *Observer pattern*. Namun, apakah dalam konteks BambangShop kita masih memerlukan interface atau trait dalam Rust, atau cukup dengan satu Model struct saja?  
+
+Menurut pemahaman saya, dalam kasus BambangShop saat ini, cukup menggunakan satu Model struct untuk *Subscriber* tanpa perlu mendefinisikan sebuah trait. Hal ini karena sistem saat ini hanya memiliki satu entitas yang bisa di-*subscribe*, yaitu *Product*, yang memiliki atribut *product_type* sebagai pembeda. Namun, jika ke depannya BambangShop menambahkan model lain yang juga dapat di-*subscribe* oleh *Subscriber*, maka akan lebih baik jika kita menggunakan sebuah interface atau trait untuk meningkatkan fleksibilitas dan skalabilitas sistem.  
+
+#### **Unik pada `id` dalam Product dan `url` dalam Subscriber: Apakah `Vec` Cukup atau `DashMap` Diperlukan?**  
+
+Baik `id` dalam *Product* maupun `url` dalam *Subscriber* bersifat unik, sehingga muncul pertanyaan apakah kita bisa menggunakan `Vec` sebagai struktur data atau tetap memerlukan `DashMap`. Dalam kasus ini, penggunaan `DashMap` tetap lebih optimal.  
+
+Alasannya adalah karena *Subscriber* disimpan berdasarkan *product_type* dari *Product*. Jika kita menggunakan `Vec`, kita perlu menambahkan logika pemetaan antara indeks `Vec` dan *product_type*, yang pada akhirnya hanya akan meningkatkan kompleksitas kode. Selain itu, dalam hal penghapusan *Subscriber*, `DashMap` lebih efisien karena mendukung akses data dalam waktu konstan (*O(1)*), sementara `Vec` memerlukan pencarian linear (*O(n)*) untuk menemukan elemen yang akan dihapus. Oleh karena itu, `DashMap` tetap menjadi pilihan yang lebih baik untuk kasus ini.  
+
+#### **Apakah `DashMap` Masih Diperlukan atau Bisa Digantikan dengan Singleton?**  
+
+Rust memiliki aturan yang sangat ketat dalam memastikan program yang dibuat *thread-safe*, termasuk dalam kasus penyimpanan daftar *Subscriber* dalam variabel statis `SUBSCRIBERS`. Dalam implementasi saat ini, digunakan `DashMap` sebagai *thread-safe HashMap*. Namun, apakah kita bisa menggantinya dengan pola *Singleton*?  
+
+Secara teori, kita bisa menerapkan *Singleton pattern* untuk menyimpan daftar *Subscriber*, tetapi implementasinya di Rust cukup kompleks karena adanya batasan terkait variabel statis dan *mutability*. Rust mengharuskan penggunaan mekanisme *synchronization* seperti `Mutex` atau `RwLock` dalam *Singleton*, yang bisa menambah overhead dalam pengelolaan data. Dalam kasus ini, karena tujuan utama kita adalah menyimpan daftar *Subscriber* yang terorganisir berdasarkan *product_type*, penggunaan `DashMap` lebih sederhana dan lebih efisien dibandingkan harus mengimplementasikan *Singleton* dari nol.  
+
 #### Reflection Publisher-2
 
 #### Reflection Publisher-3
