@@ -96,4 +96,26 @@ Secara teori, kita bisa menerapkan *Singleton pattern* untuk menyimpan daftar *S
 
 #### Reflection Publisher-2
 
+#### **Mengapa Kita Perlu Memisahkan “Service” dan “Repository” dari Model?**  
+
+Dalam pola *Model-View-Controller* (MVC), Model secara tradisional menangani baik penyimpanan data maupun logika bisnis. Namun, untuk menjaga prinsip *Single Responsibility*, kita perlu memisahkan *Service* dan *Repository* dari Model.  
+
+Dengan melakukan pemisahan ini, Model hanya bertanggung jawab untuk merepresentasikan data, sedangkan penyimpanan data menjadi tanggung jawab *Repository*, dan logika bisnis ditangani oleh *Service*. Hal ini membantu menjaga modularitas, mempermudah pemeliharaan kode, serta meningkatkan keterbacaan dan skalabilitas sistem.  
+
+#### **Apa yang Terjadi Jika Kita Hanya Menggunakan Model?**  
+
+Jika kita tidak memisahkan *Service* dan *Repository*, Model akan menjadi sangat kompleks karena harus menangani berbagai tanggung jawab secara bersamaan. Sebagai contoh, dalam sistem yang melibatkan *Product*, *Subscriber*, dan *Notification*, setiap Model harus menangani berbagai interaksi, seperti:  
+
+- *Subscriber* dapat *subscribe* dan *unsubscribe* terhadap produk tertentu.  
+- *Notification* harus dikirim setiap kali ada perubahan pada produk yang di-*subscribe*.  
+- Semua interaksi ini harus dikelola dalam satu Model, yang membuat kode menjadi sulit untuk dipahami dan dikelola.  
+
+Dengan memisahkan *Service* dan *Repository*, kita dapat mengurangi kompleksitas ini dengan mendistribusikan tanggung jawab ke dalam komponen yang lebih spesifik dan terorganisir.  
+
+#### **Bagaimana Postman Membantu dalam Pengujian?**  
+
+Saya belum terlalu mendalami fitur-fitur Postman secara menyeluruh, tetapi sejauh ini, Postman sangat membantu dalam pengujian API yang saya buat. Alat ini memungkinkan saya untuk menguji berbagai jenis HTTP request, bukan hanya `GET` dan `POST`, tetapi juga `PUT`, `DELETE`, dan lainnya, sehingga saya bisa memastikan endpoint hanya menerima tipe request yang sesuai.  
+
+Selain itu, fitur *Headers* dan *Authorization* dalam Postman sangat berguna, terutama untuk proyek yang memerlukan autentikasi atau penggunaan *custom headers*. Dengan Postman, saya bisa menguji API dengan cepat dan efisien tanpa harus menulis skrip tambahan atau mengandalkan browser. Secara keseluruhan, Postman adalah alat yang sangat praktis untuk pengujian API dalam proyek pengembangan perangkat lunak.  
+
 #### Reflection Publisher-3
