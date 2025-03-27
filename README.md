@@ -78,6 +78,44 @@ This is the place for you to write reflections:
 
 #### Reflection Publisher-1
 
+Dalam buku *Head First Design Patterns*, Subscriber didefinisikan sebagai sebuah interface dalam diagram *Observer pattern*. Namun, apakah dalam konteks BambangShop kita masih memerlukan interface atau trait dalam Rust, atau cukup dengan satu Model struct saja?  
+
+Menurut pemahaman saya, dalam kasus BambangShop saat ini, cukup menggunakan satu Model struct untuk *Subscriber* tanpa perlu mendefinisikan sebuah trait. Hal ini karena sistem saat ini hanya memiliki satu entitas yang bisa di-*subscribe*, yaitu *Product*, yang memiliki atribut *product_type* sebagai pembeda. Namun, jika ke depannya BambangShop menambahkan model lain yang juga dapat di-*subscribe* oleh *Subscriber*, maka akan lebih baik jika kita menggunakan sebuah interface atau trait untuk meningkatkan fleksibilitas dan skalabilitas sistem.  
+
+#### **Unik pada `id` dalam Product dan `url` dalam Subscriber: Apakah `Vec` Cukup atau `DashMap` Diperlukan?**  
+
+Baik `id` dalam *Product* maupun `url` dalam *Subscriber* bersifat unik, sehingga muncul pertanyaan apakah kita bisa menggunakan `Vec` sebagai struktur data atau tetap memerlukan `DashMap`. Dalam kasus ini, penggunaan `DashMap` tetap lebih optimal.  
+
+Alasannya adalah karena *Subscriber* disimpan berdasarkan *product_type* dari *Product*. Jika kita menggunakan `Vec`, kita perlu menambahkan logika pemetaan antara indeks `Vec` dan *product_type*, yang pada akhirnya hanya akan meningkatkan kompleksitas kode. Selain itu, dalam hal penghapusan *Subscriber*, `DashMap` lebih efisien karena mendukung akses data dalam waktu konstan (*O(1)*), sementara `Vec` memerlukan pencarian linear (*O(n)*) untuk menemukan elemen yang akan dihapus. Oleh karena itu, `DashMap` tetap menjadi pilihan yang lebih baik untuk kasus ini.  
+
+#### **Apakah `DashMap` Masih Diperlukan atau Bisa Digantikan dengan Singleton?**  
+
+Rust memiliki aturan yang sangat ketat dalam memastikan program yang dibuat *thread-safe*, termasuk dalam kasus penyimpanan daftar *Subscriber* dalam variabel statis `SUBSCRIBERS`. Dalam implementasi saat ini, digunakan `DashMap` sebagai *thread-safe HashMap*. Namun, apakah kita bisa menggantinya dengan pola *Singleton*?  
+
+Secara teori, kita bisa menerapkan *Singleton pattern* untuk menyimpan daftar *Subscriber*, tetapi implementasinya di Rust cukup kompleks karena adanya batasan terkait variabel statis dan *mutability*. Rust mengharuskan penggunaan mekanisme *synchronization* seperti `Mutex` atau `RwLock` dalam *Singleton*, yang bisa menambah overhead dalam pengelolaan data. Dalam kasus ini, karena tujuan utama kita adalah menyimpan daftar *Subscriber* yang terorganisir berdasarkan *product_type*, penggunaan `DashMap` lebih sederhana dan lebih efisien dibandingkan harus mengimplementasikan *Singleton* dari nol.  
+
 #### Reflection Publisher-2
+
+#### **Mengapa Kita Perlu Memisahkan “Service” dan “Repository” dari Model?**  
+
+Dalam pola *Model-View-Controller* (MVC), Model secara tradisional menangani baik penyimpanan data maupun logika bisnis. Namun, untuk menjaga prinsip *Single Responsibility*, kita perlu memisahkan *Service* dan *Repository* dari Model.  
+
+Dengan melakukan pemisahan ini, Model hanya bertanggung jawab untuk merepresentasikan data, sedangkan penyimpanan data menjadi tanggung jawab *Repository*, dan logika bisnis ditangani oleh *Service*. Hal ini membantu menjaga modularitas, mempermudah pemeliharaan kode, serta meningkatkan keterbacaan dan skalabilitas sistem.  
+
+#### **Apa yang Terjadi Jika Kita Hanya Menggunakan Model?**  
+
+Jika kita tidak memisahkan *Service* dan *Repository*, Model akan menjadi sangat kompleks karena harus menangani berbagai tanggung jawab secara bersamaan. Sebagai contoh, dalam sistem yang melibatkan *Product*, *Subscriber*, dan *Notification*, setiap Model harus menangani berbagai interaksi, seperti:  
+
+- *Subscriber* dapat *subscribe* dan *unsubscribe* terhadap produk tertentu.  
+- *Notification* harus dikirim setiap kali ada perubahan pada produk yang di-*subscribe*.  
+- Semua interaksi ini harus dikelola dalam satu Model, yang membuat kode menjadi sulit untuk dipahami dan dikelola.  
+
+Dengan memisahkan *Service* dan *Repository*, kita dapat mengurangi kompleksitas ini dengan mendistribusikan tanggung jawab ke dalam komponen yang lebih spesifik dan terorganisir.  
+
+#### **Bagaimana Postman Membantu dalam Pengujian?**  
+
+Saya belum terlalu mendalami fitur-fitur Postman secara menyeluruh, tetapi sejauh ini, Postman sangat membantu dalam pengujian API yang saya buat. Alat ini memungkinkan saya untuk menguji berbagai jenis HTTP request, bukan hanya `GET` dan `POST`, tetapi juga `PUT`, `DELETE`, dan lainnya, sehingga saya bisa memastikan endpoint hanya menerima tipe request yang sesuai.  
+
+Selain itu, fitur *Headers* dan *Authorization* dalam Postman sangat berguna, terutama untuk proyek yang memerlukan autentikasi atau penggunaan *custom headers*. Dengan Postman, saya bisa menguji API dengan cepat dan efisien tanpa harus menulis skrip tambahan atau mengandalkan browser. Secara keseluruhan, Postman adalah alat yang sangat praktis untuk pengujian API dalam proyek pengembangan perangkat lunak.  
 
 #### Reflection Publisher-3
